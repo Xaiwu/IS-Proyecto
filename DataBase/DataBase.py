@@ -36,22 +36,46 @@ con.commit()
 con.close()
 
 def insertar_especialista(nombre=str, especialidad=str):
-    con = sqlite3.connect('centro_medico.db')
+    con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
-    cursor.execute('INSERT INTO Especialistas (nombre, especialidad) VALUES (?, ?)', (nombre, especialidad))
+    cursor.execute("INSERT INTO Especialistas (nombre, especialidad) VALUES (?, ?)", (nombre, especialidad))
     con.commit()
     con.close()
 
 def insertar_paciente(nombre=str, telefono=str, direccion=str):
-    con = sqlite3.connect('centro_medico.db')
+    con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
-    cursor.execute('INSERT INTO Pacientes (nombre, telefono, direccion) VALUES (?, ?, ?)', (nombre, telefono, direccion))
+    cursor.execute("INSERT INTO Pacientes (nombre, telefono, direccion) VALUES (?, ?, ?)", (nombre, telefono, direccion))
     con.commit()
     con.close()
 
 def insertar_cita(fecha=str, hora=str, id_especialista=int, id_paciente=int):
-    con = sqlite3.connect('centro_medico.db')
+    con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
-    cursor.execute('INSERT INTO Citas (fecha, hora, id_especialista, id_paciente) VALUES (?, ?, ?, ?)', (fecha, hora, id_especialista, id_paciente))
+    cursor.execute("INSERT INTO Citas (fecha, hora, id_especialista, id_paciente) VALUES (?, ?, ?, ?)", (fecha, hora, id_especialista, id_paciente))
     con.commit()
     con.close()
+
+def obtener_datos_especialistas():
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM Especialistas")
+    datos = cursor.fetchall()
+    con.close()
+    return datos
+
+def obtener_datos_pacientes():
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM Pacientes")
+    datos = cursor.fetchall()
+    con.close()
+    return datos
+
+def obtener_datos_citas():
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM Citas")
+    datos = cursor.fetchall()
+    con.close()
+    return datos
