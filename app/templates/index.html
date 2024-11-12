@@ -1,0 +1,24 @@
+<!-- app/templates/index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Centro Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Centro Médico</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('servicios') }}">Servicios</a>
+            <a href="{{ url_for('reservar') }}">Reservar Cita</a>
+            <a href="{{ url_for('login') }}">Iniciar Sesión</a>
+        </nav>
+    </header>
+    <section>
+        <h2>Bienvenidos a nuestro centro médico</h2>
+        <p>Ofrecemos atención integral y especializada.</p>
+    </section>
+</body>
+</html>
