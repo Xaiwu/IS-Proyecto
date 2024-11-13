@@ -1,0 +1,37 @@
+<!-- app/templates/reservar.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservar Cita - Centro Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Reservar Cita</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('servicios') }}">Servicios</a>
+        </nav>
+    </header>
+    <section>
+        <h2>Elige una Fecha y Hora</h2>
+        <form method="POST" action="{{ url_for('reservar') }}">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+
+            <label for="hora">Hora:</label>
+            <input type="time" id="hora" name="hora" required>
+
+            <label for="especialista">Especialista:</label>
+            <select id="especialista" name="especialista">
+                {% for especialista in especialistas %}
+                    <option value="{{ especialista.id }}">{{ especialista.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Reservar</button>
+        </form>
+    </section>
+</body>
+</html>
