@@ -9,3 +9,7 @@ app = create_app()
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/reserva')
+def reserva():
+    return render_template('reserva.html') 
