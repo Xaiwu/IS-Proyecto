@@ -1,12 +1,10 @@
 from flask import Flask
+from .routes import bp
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config')
+    app.register_blueprint(bp)
 
-    with app.app_context():
-        # Importar rutas
-        from . import routes
-
-        return app
+    return app

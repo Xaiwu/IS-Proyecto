@@ -10,13 +10,12 @@
     <header>
         <h1>Reservar Cita</h1>
         <nav>
-            <a href="{{ url_for('index') }}">Inicio</a>
-            <a href="{{ url_for('servicios') }}">Servicios</a>
+            <a href="{{ url_for('main.index') }}">Inicio</a>
         </nav>
     </header>
     <section>
         <h2>Elige una Fecha y Hora</h2>
-        <form method="POST" action="{{ url_for('reservar') }}">
+        <form method="POST" action="{{ url_for('main.reservar') }}">
             <label for="fecha">Fecha:</label>
             <input type="date" id="fecha" name="fecha" required>
 
