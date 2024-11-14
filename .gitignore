@@ -1,1 +1,5 @@
 venv/
+
+# Archivos de credenciales
+credentials.json
+token.json
