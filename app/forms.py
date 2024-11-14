@@ -36,11 +36,10 @@ class ReservaForm(FlaskForm):
 
 class AsistenteReservaForm(FlaskForm):
     fecha = DateField('Fecha', format='%Y-%m-%d', validators=[DataRequired()])
-    hora = SelectField('Hora', coerce=str, validators=[DataRequired()])
-    especialista = SelectField(
-        'Especialista', coerce=int, validators=[DataRequired()])
-    paciente = SelectField('Paciente', coerce=int, validators=[DataRequired()])
-    submit = SubmitField('Reservar/Modificar')
+    hora = SelectField('Hora', choices=[], validators=[DataRequired()])
+    especialista = SelectField('Especialista', choices=[], validators=[DataRequired()])
+    paciente = SelectField('Paciente', choices=[], validators=[DataRequired()])
+    submit = SubmitField('Guardar')
 
 
 class PacienteForm(FlaskForm):

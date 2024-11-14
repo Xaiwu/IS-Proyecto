@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from datetime import datetime
 import sqlite3
 from DataBase.DataBase import insertar_paciente, citas_pacientes, obtener_datos_citas, actualizar_cita, obtener_cita, obtener_datos_pacientes, citas_especialista, insertar_cita, obtener_datos_especialistas
 from .forms import AsistenteReservaForm, PacienteForm, ReservaForm
@@ -106,23 +107,35 @@ def asistente():
 @bp.route('/asistente/modificar_cita/<int:cita_id>', methods=['GET', 'POST'])
 def modificar_cita(cita_id):
     form = AsistenteReservaForm()
+
+    # Poblar las opciones del formulario antes de la validación
+    especialistas = obtener_datos_especialistas()
+    pacientes = obtener_datos_pacientes()
+    todas_horas = ["09:00", "10:00", "11:00", "12:00",
+                   "13:00", "14:00", "15:00", "16:00", "17:00"]
+
+    form.especialista.choices = [(e[0], e[1]) for e in especialistas]
+    form.paciente.choices = [(p[0], p[1]) for p in pacientes]
+    form.hora.choices = [(hora, hora) for hora in todas_horas]
+
     cita = obtener_cita(cita_id)
-    if cita:
-        form.fecha.data = cita[1]
+    if cita and request.method == 'GET':
+        # Convierte la fecha a un objeto datetime
+        form.fecha.data = datetime.strptime(cita[1], '%Y-%m-%d')
         form.hora.data = cita[2]
         form.especialista.data = cita[3]
         form.paciente.data = cita[4]
 
-    if form.validate_on_submit():
-        actualizar_cita(cita_id, form.fecha.data, form.hora.data,
-                        form.especialista.data, form.paciente.data)
-        flash('Cita modificada con éxito')
-        return redirect(url_for('main.asistente'))
-
-    especialistas = obtener_datos_especialistas()
-    pacientes = obtener_datos_pacientes()
-    form.especialista.choices = [(e[0], e[1]) for e in especialistas]
-    form.paciente.choices = [(p[0], p[1]) for p in pacientes]
+    if request.method == 'POST':
+        print("Formulario enviado con método POST")
+        if form.validate_on_submit():
+            print("Formulario validado correctamente")
+            actualizar_cita(cita_id, form.fecha.data, form.hora.data,
+                            form.especialista.data, form.paciente.data)
+            flash('Cita modificada con éxito')
+            return redirect(url_for('main.asistente'))
+        else:
+            print("Errores de validación del formulario:", form.errors)
 
     return render_template('asistente_reservar.html', form=form)
 
