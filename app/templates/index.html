@@ -1,11 +1,11 @@
-{% extends 'layout.html' %}  
-
-{% block title %}Inicio{% endblock %} 
-
+{% extends 'layout.html' %}
+{% block title %}Inicio{% endblock %}
 {% block content %}
 <section>
     <h2>Bienvenido al Centro Médico</h2>
     <p>Cuida de tu salud con nuestro servicio personalizado y profesional.</p>
-    <a href="{{ url_for('main.reservar') }}">Reserva Ahora</a>
+    <a href="{{ url_for('main.servicios') }}">Más Información</a>
+    <a href="{{ url_for('main.asistente_reservar') }}">Reservar/Modificar Cita</a>
+    <a href="{{ url_for('main.asistente_ver_citas') }}">Ver Citas</a>
 </section>
 {% endblock %}

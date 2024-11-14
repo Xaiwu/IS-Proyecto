@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Reservar Cita - Centro Médico</title>
+    <title>Reservar/Modificar Cita - Asistente</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -12,7 +12,7 @@
 
 <body>
     <header>
-        <h1>Reservar Cita</h1>
+        <h1>Reservar/Modificar Cita</h1>
         <nav>
             <a href="{{ url_for('main.index') }}">Inicio</a>
             <a href="{{ url_for('main.servicios') }}">Servicios</a>
@@ -29,7 +29,7 @@
         </ul>
         {% endif %}
         {% endwith %}
-        <form method="POST" action="{{ url_for('main.reserva') }}">
+        <form method="POST" action="{{ url_for('main.asistente_reservar') }}">
             {{ form.hidden_tag() }}
             <label for="fecha">Fecha:</label>
             {{ form.fecha }}
@@ -37,22 +37,24 @@
             {{ form.hora }}
             <label for="especialista">Especialista:</label>
             {{ form.especialista }}
+            <label for="paciente">Paciente:</label>
+            {{ form.paciente }}
             {{ form.submit }}
         </form>
-        <h2>Especialistas Disponibles</h2>
+        <h2>Pacientes</h2>
         <ul>
-            {% for especialista in especialistas %}
-            <li>{{ especialista[1] }} - {{ especialista[2] }}</li>
+            {% for paciente in pacientes %}
+            <li>{{ paciente[1] }} - {{ paciente[2] }} - {{ paciente[3] }}</li>
             {% endfor %}
         </ul>
     </section>
     <script>
         $(function () {
+            // Inicializar el selector de fecha con jQuery UI Datepicker
             $("#fecha").datepicker({
                 dateFormat: "yy-mm-dd",
                 onSelect: function (dateText) {
-                    // Aquí puedes hacer una llamada AJAX para obtener las horas disponibles
-                    // y actualizar el menú desplegable de horas
+                    // Solicitar las horas disponibles al servidor
                     $.ajax({
                         url: "{{ url_for('main.obtener_horas_disponibles') }}",
                         method: "GET",
@@ -60,6 +62,7 @@
                         success: function (data) {
                             var horaSelect = $("#hora");
                             horaSelect.empty();
+                            // Agregar las opciones de hora disponibles al campo de selección
                             $.each(data.horas, function (index, hora) {
                                 horaSelect.append($("<option></option>").attr("value", hora).text(hora));
                             });

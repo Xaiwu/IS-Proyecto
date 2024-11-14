@@ -29,6 +29,17 @@ class Paciente(db.Model):
         return f'<Paciente {self.id} - {self.nombre} - {self.telefono}>'
 
 
+class Asistente(db.Model):
+    __tablename__ = 'asistentes'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    telefono = db.Column(db.String(20), nullable=False)
+    direccion = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return f'<Asistente {self.id} - {self.nombre} - {self.telefono}>'
+
+
 class Cita(db.Model):
     __tablename__ = 'citas'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -36,10 +47,13 @@ class Cita(db.Model):
     hora = db.Column(db.String(5), nullable=False)
     id_especialista = db.Column(db.Integer, db.ForeignKey('especialistas.id'))
     id_paciente = db.Column(db.Integer, db.ForeignKey('pacientes.id'))
+    id_asistente = db.Column(db.Integer, db.ForeignKey('asistentes.id'))
     especialista = db.relationship(
         'Especialista', backref=db.backref('citas', lazy=True))
     paciente = db.relationship(
         'Paciente', backref=db.backref('citas', lazy=True))
+    asistente = db.relationship(
+        'Asistente', backref=db.backref('citas', lazy=True))
 
     def __repr__(self):
-        return f'<Cita {self.id} - {self.fecha} - {self.hora} - Especialista {self.id_especialista} - Paciente {self.id_paciente}>'
+        return f'<Cita {self.id} - {self.fecha} - {self.hora} - Especialista {self.id_especialista} - Paciente {self.id_paciente} - Asistente {self.id_asistente}>'

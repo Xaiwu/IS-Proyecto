@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Paciente - Centro Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>Registro de Paciente</h1>
+        <nav>
+            <a href="{{ url_for('main.index') }}">Inicio</a>
+            <a href="{{ url_for('main.servicios') }}">Servicios</a>
+        </nav>
+    </header>
+    <section>
+        <h2>Formulario de Registro</h2>
+        <form method="POST" action="{{ url_for('main.registro') }}">
+            {{ form.hidden_tag() }}
+            <label for="nombre">Nombre:</label>
+            {{ form.nombre }}
+            <label for="telefono">Teléfono:</label>
+            {{ form.telefono }}
+            <label for="direccion">Dirección:</label>
+            {{ form.direccion }}
+            {{ form.submit }}
+        </form>
+    </section>
+</body>
+
+</html>

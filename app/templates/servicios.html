@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Servicios - Centro Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>Servicios</h1>
+        <nav>
+            <a href="{{ url_for('main.index') }}">Inicio</a>
+            <a href="{{ url_for('main.reservar') }}">Reserva</a>
+            <a href="{{ url_for('main.ver_datos') }}">Ver Datos</a>
+        </nav>
+    </header>
+    <section>
+        <h2>Nuestros Servicios</h2>
+        <p>Descripción de los servicios ofrecidos por el centro médico.</p>
+    </section>
+</body>
+
+</html>

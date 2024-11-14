@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ver Citas - Asistente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>Ver Citas</h1>
+        <nav>
+            <a href="{{ url_for('main.index') }}">Inicio</a>
+            <a href="{{ url_for('main.servicios') }}">Servicios</a>
+        </nav>
+    </header>
+    <section>
+        <h2>Citas</h2>
+        <ul>
+            {% for cita in citas %}
+            <li>{{ cita.fecha }} - {{ cita.hora }} - Especialista ID: {{ cita.id_especialista }} - Paciente ID: {{
+                cita.id_paciente }} - Asistente ID: {{ cita.id_asistente }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+</body>
+
+</html>
