@@ -133,3 +133,24 @@ def citas_especialista(id_especialista):
     datos = cursor.fetchall()
     con.close()
     return datos
+
+
+def actualizar_cita(cita_id, fecha, hora, id_especialista, id_paciente):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("""
+        UPDATE Citas
+        SET fecha = ?, hora = ?, id_especialista = ?, id_paciente = ?
+        WHERE id = ?
+    """, (fecha, hora, id_especialista, id_paciente, cita_id))
+    con.commit()
+    con.close()
+
+
+def obtener_cita(cita_id):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM Citas WHERE id = ?", (cita_id,))
+    datos = cursor.fetchone()
+    con.close()
+    return datos

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del Asistente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+
+<body>
+    <header>
+        <h1>Panel del Asistente</h1>
+        <nav>
+            <a href="{{ url_for('main.index') }}">Inicio</a>
+            <a href="{{ url_for('main.servicios') }}">Servicios</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Registrar Paciente</h2>
+            <form method="POST" action="{{ url_for('main.asistente') }}">
+                {{ form_paciente.hidden_tag() }}
+                <label for="nombre">Nombre:</label>
+                {{ form_paciente.nombre }}
+                <label for="telefono">Teléfono:</label>
+                {{ form_paciente.telefono }}
+                <label for="direccion">Dirección:</label>
+                {{ form_paciente.direccion }}
+                <button type="submit">Registrar</button>
+            </form>
+        </section>
+        <section>
+            <h2>Modificar/Cancelar Cita</h2>
+            <form method="GET" action="{{ url_for('main.asistente') }}">
+                <label for="paciente">Selecciona un paciente:</label>
+                <select name="paciente_id" id="paciente">
+                    {% for paciente in pacientes %}
+                    <option value="{{ paciente[0] }}">{{ paciente[1] }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Ver Citas</button>
+            </form>
+            {% if citas %}
+            <h3>Citas asociadas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Especialista</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in citas %}
+                    <tr>
+                        <td>{{ cita[1] }}</td>
+                        <td>{{ cita[2] }}</td>
+                        <td>{{ cita[3] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('main.cancelar_cita', cita_id=cita[0]) }}">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                            <a href="{{ url_for('main.modificar_cita', cita_id=cita[0]) }}">Modificar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </section>
+        <section>
+            <h2>Asignar Nueva Cita</h2>
+            <form method="POST" action="{{ url_for('main.asistente') }}">
+                {{ form_reserva.hidden_tag() }}
+                <label for="fecha">Fecha:</label>
+                {{ form_reserva.fecha }}
+                <label for="hora">Hora:</label>
+                {{ form_reserva.hora }}
+                <label for="especialista">Especialista:</label>
+                {{ form_reserva.especialista }}
+                <label for="paciente">Paciente:</label>
+                {{ form_reserva.paciente }}
+                <button type="submit">Asignar Cita</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Centro Médico</p>
+    </footer>
+    <script>
+        $(function () {
+            $("#fecha").datepicker({
+                dateFormat: "yy-mm-dd",
+                onSelect: function (dateText) {
+                    $.ajax({
+                        url: "{{ url_for('main.obtener_horas_disponibles') }}",
+                        method: "GET",
+                        data: { fecha: dateText, especialista_id: $("#especialista").val() },
+                        success: function (data) {
+                            var horaSelect = $("#hora");
+                            horaSelect.empty();
+                            $.each(data.horas, function (index, hora) {
+                                horaSelect.append($("<option></option>").attr("value", hora).text(hora));
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

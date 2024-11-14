@@ -29,7 +29,7 @@
         </ul>
         {% endif %}
         {% endwith %}
-        <form method="POST" action="{{ url_for('main.reserva') }}">
+        <form method="POST" action="{{ url_for('main.reservar') }}">
             {{ form.hidden_tag() }}
             <label for="fecha">Fecha:</label>
             {{ form.fecha }}
@@ -37,22 +37,16 @@
             {{ form.hora }}
             <label for="especialista">Especialista:</label>
             {{ form.especialista }}
+            <label for="paciente">Paciente:</label>
+            {{ form.paciente }}
             {{ form.submit }}
         </form>
-        <h2>Especialistas Disponibles</h2>
-        <ul>
-            {% for especialista in especialistas %}
-            <li>{{ especialista[1] }} - {{ especialista[2] }}</li>
-            {% endfor %}
-        </ul>
     </section>
     <script>
         $(function () {
             $("#fecha").datepicker({
                 dateFormat: "yy-mm-dd",
                 onSelect: function (dateText) {
-                    // Aquí puedes hacer una llamada AJAX para obtener las horas disponibles
-                    // y actualizar el menú desplegable de horas
                     $.ajax({
                         url: "{{ url_for('main.obtener_horas_disponibles') }}",
                         method: "GET",
