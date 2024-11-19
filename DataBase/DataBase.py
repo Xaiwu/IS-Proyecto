@@ -1,9 +1,7 @@
 import sqlite3
 
-def crear_database():
-    db = open("centro_medico.db", "x")
-    db.close()
 
+def crear_database():
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
 
@@ -25,40 +23,71 @@ def crear_database():
     """)
 
     cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Asistentes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            telefono TEXT,
+            direccion TEXT
+    )
+    """)
+
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS Citas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             fecha TEXT NOT NULL,
             hora TEXT NOT NULL,
             id_especialista INTEGER,
             id_paciente INTEGER,
+            id_asistente INTEGER,
             FOREIGN KEY (id_especialista) REFERENCES Especialistas(id),
-            FOREIGN KEY (id_paciente) REFERENCES Pacientes(id)
+            FOREIGN KEY (id_paciente) REFERENCES Pacientes(id),
+            FOREIGN KEY (id_asistente) REFERENCES Asistentes(id)
     )      
     """)
 
     con.commit()
     con.close()
 
-def insertar_especialista(nombre:str, especialidad:str):
+
+def insertar_especialista(nombre, especialidad):
+    conn = sqlite3.connect('centro_medico.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO Especialistas (nombre, especialidad)
+        VALUES (?, ?)
+    ''', (nombre, especialidad))
+    conn.commit()
+    conn.close()
+
+
+def insertar_paciente(nombre: str, telefono: str, direccion: str):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
-    cursor.execute("INSERT INTO Especialistas (nombre, especialidad) VALUES (?, ?)", (nombre, especialidad))
+    cursor.execute("INSERT INTO Pacientes (nombre, telefono, direccion) VALUES (?, ?, ?)",
+                   (nombre, telefono, direccion))
     con.commit()
     con.close()
 
-def insertar_paciente(nombre:str, telefono:str, direccion:str):
-    con = sqlite3.connect("centro_medico.db")
-    cursor = con.cursor()
-    cursor.execute("INSERT INTO Pacientes (nombre, telefono, direccion) VALUES (?, ?, ?)", (nombre, telefono, direccion))
-    con.commit()
-    con.close()
 
-def insertar_cita(fecha: str, hora: str, id_especialista:int, id_paciente:int):
+def insertar_cita(fecha: str, hora: str, id_especialista: int, id_paciente: int):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
-    cursor.execute("INSERT INTO Citas (fecha, hora, id_especialista, id_paciente) VALUES (?, ?, ?, ?)", (fecha, hora, id_especialista, id_paciente))
+
+    # Verificar disponibilidad del especialista
+    cursor.execute("SELECT * FROM Citas WHERE fecha = ? AND hora = ? AND id_especialista = ?",
+                   (fecha, hora, id_especialista))
+    cita_existente = cursor.fetchone()
+
+    if cita_existente:
+        con.close()
+        return False  # El especialista no está disponible en la fecha y hora solicitadas
+
+    cursor.execute("INSERT INTO Citas (fecha, hora, id_especialista, id_paciente) VALUES (?, ?, ?, ?)",
+                   (fecha, hora, id_especialista, id_paciente))
     con.commit()
     con.close()
+    return True  # La cita se reservó con éxito
+
 
 def obtener_datos_especialistas():
     con = sqlite3.connect("centro_medico.db")
@@ -68,6 +97,7 @@ def obtener_datos_especialistas():
     con.close()
     return datos
 
+
 def obtener_datos_pacientes():
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
@@ -75,6 +105,7 @@ def obtener_datos_pacientes():
     datos = cursor.fetchall()
     con.close()
     return datos
+
 
 def obtener_datos_citas():
     con = sqlite3.connect("centro_medico.db")
@@ -84,6 +115,7 @@ def obtener_datos_citas():
     con.close()
     return datos
 
+
 def citas_pacientes(id_paciente):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
@@ -92,10 +124,33 @@ def citas_pacientes(id_paciente):
     con.close()
     return datos
 
+
 def citas_especialista(id_especialista):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
-    cursor.execute(f"SELECT * FROM Citas WHERE id_especialista = {id_especialista}")
+    cursor.execute(
+        f"SELECT * FROM Citas WHERE id_especialista = {id_especialista}")
     datos = cursor.fetchall()
+    con.close()
+    return datos
+
+
+def actualizar_cita(cita_id, fecha, hora, id_especialista, id_paciente):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("""
+        UPDATE Citas
+        SET fecha = ?, hora = ?, id_especialista = ?, id_paciente = ?
+        WHERE id = ?
+    """, (fecha, hora, id_especialista, id_paciente, cita_id))
+    con.commit()
+    con.close()
+
+
+def obtener_cita(cita_id):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM Citas WHERE id = ?", (cita_id,))
+    datos = cursor.fetchone()
     con.close()
     return datos

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ver Datos - Centro Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>Datos del Centro Médico</h1>
+        <nav>
+            <a href="{{ url_for('main.index') }}">Inicio</a>
+            <a href="{{ url_for('main.servicios') }}">Servicios</a>
+        </nav>
+    </header>
+    <section>
+        <h2>Especialistas</h2>
+        <ul>
+            {% for especialista in especialistas %}
+            <li>{{ especialista[1] }} - {{ especialista[2] }}</li>
+            {% endfor %}
+        </ul>
+        <h2>Pacientes</h2>
+        <ul>
+            {% for paciente in pacientes %}
+            <li>{{ paciente[1] }} - {{ paciente[2] }} - {{ paciente[3] }}</li>
+            {% endfor %}
+        </ul>
+        <h2>Citas</h2>
+        <ul>
+            {% for cita in citas %}
+            <li>{{ cita[1] }} - {{ cita[2] }} - Especialista ID: {{ cita[3] }} - Paciente ID: {{ cita[4] }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+</body>
+
+</html>
