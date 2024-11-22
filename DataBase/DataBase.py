@@ -154,3 +154,10 @@ def obtener_cita(cita_id):
     datos = cursor.fetchone()
     con.close()
     return datos
+
+def eliminar_cita(cita_id):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("DELETE FROM Citas WHERE id = ?", (cita_id))
+    con.commit()
+    con.close()
