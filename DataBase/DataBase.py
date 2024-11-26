@@ -154,3 +154,16 @@ def obtener_cita(cita_id):
     datos = cursor.fetchone()
     con.close()
     return datos
+
+def citas_pacientes(id_paciente):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("""
+        SELECT Citas.id, Citas.fecha, Citas.hora, Especialistas.nombre
+        FROM Citas
+        JOIN Especialistas ON Citas.id_especialista = Especialistas.id
+        WHERE Citas.id_paciente = ?
+    """, (id_paciente,))
+    datos = cursor.fetchall()
+    con.close()
+    return datos

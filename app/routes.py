@@ -162,3 +162,9 @@ def obtener_horas_disponibles():
     horas_disponibles = [
         hora for hora in todas_horas if hora not in horas_ocupadas]
     return jsonify(horas=horas_disponibles)
+
+@bp.route('/obtener_citas_paciente', methods=['GET'])
+def obtener_citas_paciente():
+    id_paciente = request.args.get('paciente_id')
+    citas = citas_pacientes(id_paciente)
+    return jsonify(citas=citas)
