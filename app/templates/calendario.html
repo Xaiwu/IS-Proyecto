@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendario de Citas{% endblock %}
+
+{% block content %}
+<h1>Calendario de Citas</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+            <th>Sábado</th>
+            <th>Domingo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for week in calendar.monthcalendar(year, month) %}
+            <tr>
+                {% for day in week %}
+                    <td>
+                        {% if day != 0 %}
+                            <a href="{{ url_for('main.semana', year=year, month=month, day=day) }}">{{ day }}</a>
+                            <ul>
+                                {% for cita in citas %}
+                                    {% if cita[1].split('-')[2]|int == day %}
+                                        <li>{{ cita[2] }} - {{ cita[3] }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('main.index') }}">Volver</a>
+{% endblock %}
+
+{% block styles %}
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+        vertical-align: top;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    td a {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+    td ul {
+        list-style-type: none;
+        padding: 0;
+    }
+</style>
+{% endblock %}
