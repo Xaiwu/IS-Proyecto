@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Calendario de Citas{% endblock %}
+{% block title %}Citas de la Semana{% endblock %}
 
 {% block styles %}
 <style>
@@ -29,10 +29,11 @@
 {% endblock %}
 
 {% block content %}
-<h1>Calendario de Citas</h1>
+<h1>Citas de la Semana</h1>
 <table>
     <thead>
         <tr>
+            <th>Hora</th>
             <th>Lunes</th>
             <th>Martes</th>
             <th>Miércoles</th>
@@ -43,25 +44,23 @@
         </tr>
     </thead>
     <tbody>
-        {% for week in calendar.monthcalendar(year, month) %}
+        {% for hour in range(9, 18) %}
             <tr>
-                {% for day in week %}
-                    <td>
-                        {% if day != 0 %}
-                            <a href="{{ url_for('main.semana', year=year, month=month, day=day) }}">{{ day }}</a>
-                            <ul>
-                                {% for cita in citas %}
-                                    {% if cita[1].split('-')[2]|int == day %}
-                                        <li>{{ cita[2] }} - {{ cita[3] }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
+                <td>{{ '%02d:00' % hour }}</td>
+                {% for i in range(7) %}
+                    <td class="hour-cell">
+                        <ul>
+                            {% for cita in citas %}
+                                {% if cita[0] == (start_date + timedelta(days=i)).strftime('%Y-%m-%d') and cita[1].split(':')[0]|int == hour %}
+                                    <li>{{ cita[2] }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
                     </td>
                 {% endfor %}
             </tr>
         {% endfor %}
     </tbody>
 </table>
-<a href="{{ url_for('main.index') }}">Volver</a>
+<a href="{{ url_for('main.calendario', year=start_date.year, month=start_date.month) }}">Volver al Calendario</a>
 {% endblock %}

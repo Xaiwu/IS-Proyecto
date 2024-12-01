@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 import sqlite3
-from DataBase.DataBase import insertar_paciente, citas_pacientes, obtener_datos_citas, actualizar_cita, obtener_cita, obtener_datos_pacientes, citas_especialista, insertar_cita, obtener_datos_especialistas
+from DataBase.DataBase import insertar_paciente, citas_pacientes, obtener_datos_citas, actualizar_cita, obtener_cita, obtener_datos_pacientes, citas_especialista, insertar_cita, obtener_datos_especialistas, obtener_citas_semana
 from .forms import AsistenteReservaForm, PacienteForm, ReservaForm
 from datetime import datetime, timedelta
 import calendar
@@ -195,7 +195,7 @@ def calendario():
     year = request.args.get('year', datetime.now().year, type=int)
     month = request.args.get('month', datetime.now().month, type=int)
     citas = obtener_datos_citas()
-    return render_template('calendario.html', year=year, month=month, citas=citas, calendar=calendar)
+    return render_template('calendario.html', year=year, month=month, citas=citas, calendar=calendar, timedelta=timedelta)
 
 @bp.route('/semana', methods=['GET'])
 def semana():
@@ -205,4 +205,5 @@ def semana():
     start_date = datetime(year, month, day) - timedelta(days=datetime(year, month, day).weekday())
     end_date = start_date + timedelta(days=6)
     citas = obtener_citas_semana(start_date, end_date)
-    return render_template('semana.html', start_date=start_date, end_date=end_date, citas=citas)
+    print("Citas obtenidas:", citas)  # Agrega esta línea para depurar
+    return render_template('semana.html', start_date=start_date, end_date=end_date, citas=citas, timedelta=timedelta)

@@ -69,7 +69,7 @@ def insertar_paciente(nombre: str, telefono: str, direccion: str):
     con.close()
 
 
-def insertar_cita(fecha: str, hora: str, id_especialista: int, id_paciente: int):
+def insertar_cita(fecha: str, hora: str, id_especialista: int, id_paciente: int, id_asistente: int):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
 
@@ -164,6 +164,23 @@ def citas_pacientes(id_paciente):
         JOIN Especialistas ON Citas.id_especialista = Especialistas.id
         WHERE Citas.id_paciente = ?
     """, (id_paciente,))
+    datos = cursor.fetchall()
+    con.close()
+    return datos
+
+import sqlite3
+from datetime import datetime
+
+def obtener_citas_semana(start_date, end_date):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("""
+        SELECT Citas.fecha, Citas.hora, Pacientes.nombre, Especialistas.nombre
+        FROM Citas
+        JOIN Pacientes ON Citas.id_paciente = Pacientes.id
+        JOIN Especialistas ON Citas.id_especialista = Especialistas.id
+        WHERE fecha BETWEEN ? AND ?
+    """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
     datos = cursor.fetchall()
     con.close()
     return datos
