@@ -179,10 +179,6 @@ def obtener_citas_paciente():
     citas = citas_pacientes(id_paciente)
     return jsonify(citas=citas)
 
-@bp.route('/medico', methods=['GET'])
-def medico():
-    especialistas = obtener_datos_especialistas()
-    return render_template('medico.html', especialistas=especialistas)
 
 @bp.route('/ver_citas', methods=['GET'])
 def ver_citas():
@@ -194,7 +190,12 @@ def ver_citas():
 def calendario():
     year = request.args.get('year', datetime.now().year, type=int)
     month = request.args.get('month', datetime.now().month, type=int)
-    citas = obtener_datos_citas()
+    medico_id = request.args.get('medico', type=int)
+    print("Medico ID:", medico_id)  # Agrega esta línea para depurar
+    if medico_id is None:
+        flash('Debe seleccionar un médico.')
+        return redirect(url_for('main.medico'))
+    citas = citas_especialista(medico_id)
     return render_template('calendario.html', year=year, month=month, citas=citas, calendar=calendar, timedelta=timedelta)
 
 @bp.route('/semana', methods=['GET'])
@@ -207,3 +208,8 @@ def semana():
     citas = obtener_citas_semana(start_date, end_date)
     print("Citas obtenidas:", citas)  # Agrega esta línea para depurar
     return render_template('semana.html', start_date=start_date, end_date=end_date, citas=citas, timedelta=timedelta)
+
+@bp.route('/medico', methods=['GET'])
+def medico():
+    especialistas = obtener_datos_especialistas()
+    return render_template('seleccionar_medico.html', especialistas=especialistas)

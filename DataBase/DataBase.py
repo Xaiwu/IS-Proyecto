@@ -125,11 +125,16 @@ def citas_pacientes(id_paciente):
     return datos
 
 
-def citas_especialista(id_especialista):
+def citas_especialista(medico_id):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
-    cursor.execute(
-        f"SELECT * FROM Citas WHERE id_especialista = {id_especialista}")
+    cursor.execute("""
+        SELECT Citas.fecha, Citas.hora, Pacientes.nombre, Especialistas.nombre
+        FROM Citas
+        JOIN Pacientes ON Citas.id_paciente = Pacientes.id
+        JOIN Especialistas ON Citas.id_especialista = Especialistas.id
+        WHERE Citas.id_especialista = ?
+    """, (medico_id,))
     datos = cursor.fetchall()
     con.close()
     return datos
