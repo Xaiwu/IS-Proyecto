@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 import sqlite3
-from DataBase.DataBase import insertar_paciente, citas_pacientes, obtener_datos_citas, actualizar_cita, obtener_cita, obtener_datos_pacientes, citas_especialista, insertar_cita, obtener_datos_especialistas, obtener_citas_semana
+from DataBase.DataBase import insertar_paciente, citas_pacientes, obtener_datos_citas, actualizar_cita, obtener_cita, obtener_datos_pacientes, citas_especialista, insertar_cita, obtener_datos_especialistas, obtener_citas_semana, obtener_datos_paciente
 from .forms import AsistenteReservaForm, PacienteForm, ReservaForm
 from datetime import datetime, timedelta
 import calendar
@@ -158,7 +158,7 @@ def cancelar_cita(cita_id):
     con.commit()
     con.close()
     flash('Cita cancelada con éxito')
-    return redirect(url_for('main.asistente'))
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/obtener_horas_disponibles', methods=['GET'])
@@ -213,3 +213,10 @@ def semana():
 def medico():
     especialistas = obtener_datos_especialistas()
     return render_template('seleccionar_medico.html', especialistas=especialistas)
+
+@bp.route('/citas_paciente', methods=['GET'])
+def citas_paciente():
+    paciente_id = 5
+    paciente_nombre = obtener_datos_paciente(paciente_id)[1]
+    citas = citas_pacientes(paciente_id)
+    return render_template('citas_paciente.html', citas=citas, paciente_id=paciente_id, paciente_nombre=paciente_nombre)

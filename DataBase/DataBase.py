@@ -69,7 +69,7 @@ def insertar_paciente(nombre: str, telefono: str, direccion: str):
     con.close()
 
 
-def insertar_cita(fecha: str, hora: str, id_especialista: int, id_paciente: int, id_asistente: int):
+def insertar_cita(fecha: str, hora: str, id_especialista: int, id_paciente: int):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
 
@@ -103,6 +103,14 @@ def obtener_datos_pacientes():
     cursor = con.cursor()
     cursor.execute("SELECT * FROM Pacientes")
     datos = cursor.fetchall()
+    con.close()
+    return datos
+
+def obtener_datos_paciente(paciente_id):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM Pacientes WHERE id = ?", (paciente_id,))
+    datos = cursor.fetchone()
     con.close()
     return datos
 
