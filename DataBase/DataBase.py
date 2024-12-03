@@ -1,5 +1,5 @@
 import sqlite3
-
+from datetime import datetime
 
 def crear_database():
     con = sqlite3.connect("centro_medico.db")
@@ -69,7 +69,7 @@ def insertar_paciente(nombre: str, telefono: str, direccion: str):
     con.close()
 
 
-def insertar_cita(fecha: str, hora: str, id_especialista: int, id_paciente: int):
+def insertar_cita(fecha: str, hora: str, id_especialista: int, id_paciente: int, id_asistente: int):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
 
@@ -125,11 +125,16 @@ def citas_pacientes(id_paciente):
     return datos
 
 
-def citas_especialista(id_especialista):
+def citas_especialista(medico_id):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
-    cursor.execute(
-        f"SELECT * FROM Citas WHERE id_especialista = {id_especialista}")
+    cursor.execute("""
+        SELECT Citas.fecha, Citas.hora, Pacientes.nombre, Especialistas.nombre
+        FROM Citas
+        JOIN Pacientes ON Citas.id_paciente = Pacientes.id
+        JOIN Especialistas ON Citas.id_especialista = Especialistas.id
+        WHERE Citas.id_especialista = ?
+    """, (medico_id,))
     datos = cursor.fetchall()
     con.close()
     return datos
@@ -152,6 +157,34 @@ def obtener_cita(cita_id):
     cursor = con.cursor()
     cursor.execute("SELECT * FROM Citas WHERE id = ?", (cita_id,))
     datos = cursor.fetchone()
+    con.close()
+    return datos
+
+
+def citas_pacientes(id_paciente):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("""
+        SELECT Citas.id, Citas.fecha, Citas.hora, Especialistas.nombre
+        FROM Citas
+        JOIN Especialistas ON Citas.id_especialista = Especialistas.id
+        WHERE Citas.id_paciente = ?
+    """, (id_paciente,))
+    datos = cursor.fetchall()
+    con.close()
+    return datos
+
+def obtener_citas_semana(start_date, end_date):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("""
+        SELECT Citas.fecha, Citas.hora, Pacientes.nombre, Especialistas.nombre
+        FROM Citas
+        JOIN Pacientes ON Citas.id_paciente = Pacientes.id
+        JOIN Especialistas ON Citas.id_especialista = Especialistas.id
+        WHERE fecha BETWEEN ? AND ?
+    """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+    datos = cursor.fetchall()
     con.close()
     return datos
 

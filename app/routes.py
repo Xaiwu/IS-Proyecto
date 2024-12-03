@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from datetime import datetime
 import sqlite3
-from DataBase.DataBase import insertar_paciente, citas_pacientes, obtener_datos_citas, actualizar_cita, obtener_cita, obtener_datos_pacientes, citas_especialista, insertar_cita, obtener_datos_especialistas
+from DataBase.DataBase import insertar_paciente, citas_pacientes, obtener_datos_citas, actualizar_cita, obtener_cita, obtener_datos_pacientes, citas_especialista, insertar_cita, obtener_datos_especialistas, obtener_citas_semana
 from .forms import AsistenteReservaForm, PacienteForm, ReservaForm
+from datetime import datetime, timedelta
+import calendar
 
 bp = Blueprint('main', __name__)
 
@@ -71,6 +72,15 @@ def asistente():
     form_reserva = AsistenteReservaForm()
     pacientes = obtener_datos_pacientes()
     citas = []
+
+    # Poblar las opciones del formulario antes de la validación
+    especialistas = obtener_datos_especialistas()
+    todas_horas = ["09:00", "10:00", "11:00", "12:00",
+                   "13:00", "14:00", "15:00", "16:00", "17:00"]
+
+    form_reserva.especialista.choices = [(e[0], e[1]) for e in especialistas]
+    form_reserva.paciente.choices = [(p[0], p[1]) for p in pacientes]
+    form_reserva.hora.choices = [(hora, hora) for hora in todas_horas]
 
     if request.method == 'POST':
         if 'nombre' in request.form:
@@ -162,3 +172,44 @@ def obtener_horas_disponibles():
     horas_disponibles = [
         hora for hora in todas_horas if hora not in horas_ocupadas]
     return jsonify(horas=horas_disponibles)
+
+@bp.route('/obtener_citas_paciente', methods=['GET'])
+def obtener_citas_paciente():
+    id_paciente = request.args.get('paciente_id')
+    citas = citas_pacientes(id_paciente)
+    return jsonify(citas=citas)
+
+
+@bp.route('/ver_citas', methods=['GET'])
+def ver_citas():
+    medico_id = request.args.get('medico')
+    citas = citas_especialista(medico_id)
+    return render_template('ver_citas.html', citas=citas)
+
+@bp.route('/calendario', methods=['GET'])
+def calendario():
+    year = request.args.get('year', datetime.now().year, type=int)
+    month = request.args.get('month', datetime.now().month, type=int)
+    medico_id = request.args.get('medico', type=int)
+    print("Medico ID:", medico_id)  # Agrega esta línea para depurar
+    if medico_id is None:
+        flash('Debe seleccionar un médico.')
+        return redirect(url_for('main.medico'))
+    citas = citas_especialista(medico_id)
+    return render_template('calendario.html', year=year, month=month, citas=citas, calendar=calendar, timedelta=timedelta)
+
+@bp.route('/semana', methods=['GET'])
+def semana():
+    year = request.args.get('year', type=int)
+    month = request.args.get('month', type=int)
+    day = request.args.get('day', type=int)
+    start_date = datetime(year, month, day) - timedelta(days=datetime(year, month, day).weekday())
+    end_date = start_date + timedelta(days=6)
+    citas = obtener_citas_semana(start_date, end_date)
+    print("Citas obtenidas:", citas)  # Agrega esta línea para depurar
+    return render_template('semana.html', start_date=start_date, end_date=end_date, citas=citas, timedelta=timedelta)
+
+@bp.route('/medico', methods=['GET'])
+def medico():
+    especialistas = obtener_datos_especialistas()
+    return render_template('seleccionar_medico.html', especialistas=especialistas)

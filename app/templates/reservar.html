@@ -42,6 +42,28 @@
             {{ form.submit }}
         </form>
     </section>
+    <section>
+        <h2>Mis citas agendadas</h2>
+        <form id="ver-citas-form">
+            <label for="paciente">Selecciona uan cita:</label>
+            <button type="button" id="ver-citas-btn">Ver Citas</button>
+        </form>
+    </section>
+    <section id="citas-asociadas" style="display: none;">
+        <h3>Citas asociadas</h3>
+        <table id="citas-tabla">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Especialista</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se mostrarán las citas -->
+            </tbody>
+        </table>
+    </section>
     <script>
         $(function () {
             $("#fecha").datepicker({
@@ -61,7 +83,32 @@
                     });
                 }
             });
+
+            // Manejar la solicitud para ver citas
+            $("#ver-citas-btn").click(function () {
+                var pacienteId = $("#paciente").val();
+                var citasAsociadas = $("#citas-asociadas");
+                if (citasAsociadas.is(":visible")){
+                    citasAsociadas.hide();                       
+                }else{
+                $.ajax({
+                    url: "{{ url_for('main.obtener_citas_paciente') }}",
+                    method: "GET",
+                    data: { paciente_id: pacienteId },
+                    success: function (data) {
+                        var citasTabla = $("#citas-tabla tbody");
+                        citasTabla.empty();
+                        $.each(data.citas, function (index, cita) {
+                            citasTabla.append(
+                                "<tr><td>" + cita[1] + "</td><td>" + cita[2] + "</td><td>" + cita[3] + "</td></tr>"
+                            );
+                        });
+                        $("#citas-asociadas").show();
+                     }
+                 });
+             }
         });
+    });
     </script>
 </body>
 

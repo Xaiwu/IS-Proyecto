@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Citas de la Semana{% endblock %}
+
+{% block styles %}
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+        vertical-align: top;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .hour-cell {
+        height: 50px;
+    }
+    ul {
+        list-style-type: none; /* Eliminar los puntos de la lista */
+        padding: 0; /* Eliminar el padding de la lista */
+        margin: 0; /* Eliminar el margen de la lista */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Citas de la Semana</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Hora</th>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+            <th>Sábado</th>
+            <th>Domingo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for hour in range(9, 18) %}
+            <tr>
+                <td>{{ '%02d:00' % hour }}</td>
+                {% for i in range(7) %}
+                    <td class="hour-cell">
+                        <ul>
+                            {% for cita in citas %}
+                                {% if cita[0] == (start_date + timedelta(days=i)).strftime('%Y-%m-%d') and cita[1].split(':')[0]|int == hour %}
+                                    <li>{{ cita[2] }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('main.calendario', year=start_date.year, month=start_date.month) }}">Volver al Calendario</a>
+{% endblock %}
