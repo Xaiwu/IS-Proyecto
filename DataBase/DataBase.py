@@ -1,5 +1,5 @@
 import sqlite3
-
+from datetime import datetime
 
 def crear_database():
     con = sqlite3.connect("centro_medico.db")
@@ -160,6 +160,7 @@ def obtener_cita(cita_id):
     con.close()
     return datos
 
+
 def citas_pacientes(id_paciente):
     con = sqlite3.connect("centro_medico.db")
     cursor = con.cursor()
@@ -172,9 +173,6 @@ def citas_pacientes(id_paciente):
     datos = cursor.fetchall()
     con.close()
     return datos
-
-import sqlite3
-from datetime import datetime
 
 def obtener_citas_semana(start_date, end_date):
     con = sqlite3.connect("centro_medico.db")
@@ -189,3 +187,10 @@ def obtener_citas_semana(start_date, end_date):
     datos = cursor.fetchall()
     con.close()
     return datos
+
+def eliminar_cita(cita_id):
+    con = sqlite3.connect("centro_medico.db")
+    cursor = con.cursor()
+    cursor.execute("DELETE FROM Citas WHERE id = ?", (cita_id))
+    con.commit()
+    con.close()
